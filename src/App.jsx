@@ -1,22 +1,24 @@
-import React from 'react';
-import LoginForm from './components/Login';
-import Navigation from './components/Navigation';
-import Footer from './components/Footer'; // Import the Footer component
 import './App.css';
-import { BrowserRouter } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+import SignupPage from './pages/Signup';
+import LoginPage from './pages/Login';
 
 function App() {
   return (
-    
-    <BrowserRouter>
-      <div className="bg-gray-200 h-screen flex flex-col justify-center items-center"> {/* Set background color to grey and full height */}
-        <Navigation />
-        <div className="flex flex-col justify-center items-center flex-grow">
-          <LoginForm />
-        </div>
-        <Footer /> {/* Include the Footer component */}
-      </div>
-    </BrowserRouter>
+    <div className="min-h-full h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-md w-full space-y-8">
+     <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<LoginPage/>} />
+            <Route path="/signup" element={<SignupPage/>} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  </div>
   );
 }
 
