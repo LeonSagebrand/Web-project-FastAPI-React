@@ -9,17 +9,15 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, index=True)
     email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
+    password = Column(String)
+    groups = relationship("Group", secondary="user_group", back_populates="members")
 
 class Group(Base):
     __tablename__ = "groups"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    # Add other group attributes as needed
-
     members = relationship("User", secondary="user_group", back_populates="groups")
-
 
 class Transaction(Base):
     __tablename__ = "transactions"
@@ -30,11 +28,3 @@ class Transaction(Base):
     description = Column(String)
     is_income = Column(Boolean)
     date = Column(String)
-    
-    
-user_group = Table(
-    "user_group",
-    Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('group_id', Integer, ForeignKey('groups.id'))
-)

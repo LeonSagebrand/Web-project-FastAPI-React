@@ -1,44 +1,39 @@
 from fastapi import FastAPI, HTTPException, Depends
-from typing import Annotated
 from sqlalchemy.orm import Session
+from database import SessionLocal
+from models import User
 from pydantic import BaseModel
-from database import SessionLocal, engine
 import models
-from fastapi.middleware.cors import CORSMiddleware
-import database
 
 app = FastAPI()
 
 def get_db():
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
-
 
 class CreateUser(BaseModel):
     username: str
     email: str
     password: str
 
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+@app.post("/signup/")
 def create_user(user: CreateUser, db: Session = Depends(get_db)):
-    db_user = models.User(username=user.username, email=user.email, password_hash=user.password)
+    db_user = models.User(username=user.username, email=user.email, password=user.password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-
-
-origins = [
-    
-    'http://localhost:3000'
-]
-
-app.add_middleware(
-    
-    CORSMiddleware,
-    allow_origins=origins
-)
+@app.post("/login/")
+def login(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if db_user is None or db_user.password != user.password:
+        raise HTTPException(status_code=400, detail="Incorrect email or password")
+    return {"message": "Login successful"}
