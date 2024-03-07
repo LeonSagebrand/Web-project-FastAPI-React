@@ -1,39 +1,72 @@
-from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy.orm import Session
-from database import SessionLocal
-from models import User
-from pydantic import BaseModel
-import models
+from fastapi import FastAPI, HTTPException
+from . import models, database
+import logging
+from .models import User
+from .database import Base, engine
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-def get_db():
-    db = SessionLocal()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
+
+
+
+
+
+Base.metadata.create_all(bind=engine)
+database.Base.metadata.create_all(bind=database.engine)
+@app.get("/")
+async def root():
+    return {"running"}
+
+@app.post("/")
+async def root_post():
+    return {"message": "POST request received at root"}
+
+
+logging.basicConfig(level=logging.INFO)
+try:
+    with engine.connect() as connection:
+        logging.info("Database connection successful")
+except Exception as e:
+    logging.error("Failed to connect to database: %s", e)
+
+
+
+
+
+@app.post("/register/")
+def register_user(user: models.UserCreate):
+    logging.info("Received user data: %s", user.dict())
+
+    db = database.SessionLocal()
     try:
-        yield db
-    finally:
-        db.close()
-
-class CreateUser(BaseModel):
-    username: str
-    email: str
-    password: str
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
-@app.post("/signup/")
-def create_user(user: CreateUser, db: Session = Depends(get_db)):
-    db_user = models.User(username=user.username, email=user.email, password=user.password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+        db_user = models.User(**user.dict())
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        logging.info("User registered successfully: %s", db_user)        
+        return db_user
+    except Exception as e:
+        logging.error("Error registering user: %s", e)
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to register user: " + str(e))
 
 @app.post("/login/")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user is None or db_user.password != user.password:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    return {"message": "Login successful"}
+def login_user(login_data: models.UserLogin):
+    db = database.SessionLocal()
+    user = db.query(models.User).filter(models.User.email == login_data.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if login_data.password != user.password:
+        raise HTTPException(status_code=401, detail="Incorrect password")
+    return {"message": "Login successful", "user_id": user.id}
+
+
+
