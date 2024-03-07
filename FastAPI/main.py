@@ -16,13 +16,7 @@ def get_db():
     finally:
         db.close()
 
-
-
-class CreateUser(BaseModel):
-    username: str
-    email: str
-    password: str
-
+@app.post()
 def create_user(user: CreateUser, db: Session = Depends(get_db)):
     db_user = models.User(username=user.username, email=user.email, password_hash=user.password)
     db.add(db_user)
