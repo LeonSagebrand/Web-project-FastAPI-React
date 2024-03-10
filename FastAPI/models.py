@@ -1,40 +1,31 @@
+from database import Base
+from sqlalchemy import Column, Integer, String, ForeignKey
+from pydantic import validator, EmailStr
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
-from .database import Base
 from sqlalchemy.orm import relationship
 
-#användare
-class User(Base):
+
+@validator("account_id")
+def validate_account_id(cls, value):
+    if value <= 0:
+        raise ValueError(f"account_id must be positive: {value}")
+    return value
+
+
+class Users(Base):
     __tablename__ = "users"
-
+    
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
-    groups = relationship("Group", back_populates="creator")
+    username = Column(String, unique=True)
+    email = Column(String, unique=True)
+    hashed_password = Column(String)
     
-class UserCreate(BaseModel):
-    username: str
-    email: str
-    password: str
-        
-class UserLogin(BaseModel):
-    email: str
-    password: str
-    
-    
-    
-#grupper
-class Group(Base):
-    __tablename__ = "groups"
+@validator("email")
+def validate_email(cls, value):
+    if not EmailStr.validate(value):
+        raise ValueError("Invalid email address")
+    return value
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    creator_id = Column(Integer, ForeignKey('users.id'))
-    creator = relationship("User", back_populates="groups")
-    
-class GroupCreate(BaseModel):
-    name: str
-    description: str
-    creator_id: int
+
+
+
