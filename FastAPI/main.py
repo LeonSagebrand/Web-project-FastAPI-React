@@ -48,3 +48,6 @@ try:
         logging.info("Database connection successful")
 except Exception as e:
     logging.error("Failed to connect to database: %s", e)
+
+logging.getLogger('passlib').setLevel(logging.ERROR)
+#https://github.com/pyca/bcrypt/issues/684

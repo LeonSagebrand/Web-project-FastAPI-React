@@ -1,7 +1,6 @@
 from datetime import timedelta, datetime
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field, EmailStr
 from sqlalchemy.orm import Session
 from starlette import status
 from database import SessionLocal
@@ -9,7 +8,8 @@ from models import Users
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
-
+from schemas import CreateUserRequest, Token, EmailPasswordRequest, User
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter(
     prefix="/auth",
@@ -22,12 +22,6 @@ ALGORITHM = "HS256"
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    
 def get_db():
     db = SessionLocal()
     try: 
@@ -38,27 +32,40 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-class CreateUserRequest(BaseModel):
-    username: str
-    email: EmailStr
-    password: str = Field(min_length=6)
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user(db: db_dependency,
-                      create_user_request: CreateUserRequest):
-    create_user_model = Users(
-        username=create_user_request.username,
-        email=create_user_request.email,
-        hashed_password=bcrypt_context.hash(create_user_request.password),
-    )
+#skapa användare
+@router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
+async def create_user(
+    create_user_request: CreateUserRequest,
+    db: Session = Depends(get_db)
+):
+    try:
+        hashed_password = bcrypt_context.hash(create_user_request.password)
+        
+        user = Users(
+            username=create_user_request.username,
+            email=create_user_request.email,
+            hashed_password=hashed_password
+        )
+
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        
+        return user
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username or email already exists"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal Server Error"
+        )
     
-    db.add(create_user_model)
-    db.commit()
-
-class EmailPasswordRequest(BaseModel):
-    email: str
-    password: str
-
+    
+#login
 @router.post("/login", response_model=Token)
 async def login(request_data: EmailPasswordRequest, db: db_dependency):
     user = authenticate_user(request_data.email, request_data.password, db)

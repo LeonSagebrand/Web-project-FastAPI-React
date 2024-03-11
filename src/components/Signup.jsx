@@ -20,31 +20,37 @@ export default function Signup() {
   };
 
   const createAccount = () => {
-    const signupUrl = "FastAPI";
+    const signupUrl = "http://127.0.0.1:8000/auth/";
 
     const requestData = {
-      username: signupState.username,
-      email: signupState.email,
-      password: signupState.password
+        username: signupState.username,
+        email: signupState.email,
+        password: signupState.password
     };
 
     fetch(signupUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestData)
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestData)
     })
-      .then(response => {
+    .then(response => {
         if (!response.ok) {
-          throw new Error("Failed to create account");
+            throw new Error("Failed to create account");
         }
-        console.log("Account created successfully");
-      })
-      .catch(error => {
+        return response.json(); // Parse response JSON
+    })
+    .then(data => {
+        console.log("Account created successfully:", data);
+        // Redirect the user to the login page or perform other actions
+        // For example, you can use React Router to navigate to another page
+        // history.push('/login');
+    })
+    .catch(error => {
         console.error("Error creating account:", error);
-      });
-  };
+    });
+};
 
   return (
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
