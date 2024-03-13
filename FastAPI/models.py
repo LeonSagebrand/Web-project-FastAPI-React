@@ -32,17 +32,17 @@ class Group(Base):
 
     # Add other group attributes as needed
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
-    members = relationship("User", secondary="user_group", back_populates="groups")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String, unique=True)
+    members: Mapped["User"] = relationship("User", secondary="user_group", back_populates="groups")
 
 class Transaction(Base):
     __tablename__ = "transactions"
     
-    id = Column(Integer, primary_key=True, index=True)
-    amount = Column(Float)
-    share = Column(String)
-    date = Column(String)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    amount: Mapped[float] = mapped_column(Float)
+    share: Mapped[str] = mapped_column(String)
+    date: Mapped[str] = mapped_column(String)
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     amount: Mapped[int] = mapped_column(Float)
     category: Mapped[str] = mapped_column(String)
