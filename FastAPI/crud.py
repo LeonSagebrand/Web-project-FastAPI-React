@@ -1,8 +1,6 @@
 from datetime import timedelta, datetime
-from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, status, Form
+from fastapi import HTTPException, status, APIRouter, Depends
 from sqlalchemy.orm import Session
-from starlette import status
 from database import SessionLocal
 from models import Users
 from passlib.context import CryptContext
@@ -11,18 +9,14 @@ from jose import jwt, JWTError
 from schemas import CreateUserRequest, Token, EmailPasswordRequest, User
 from sqlalchemy.exc import IntegrityError
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["/auth"]
-)
+
+router = APIRouter()
 
 SECRET_KEY = "F3xH2sN8JrLp5Rq1e9mV7E8gH4iQ2kT6mX3sY9vB1W7zR5yD2oP1lV9cN3jF6"
 ALGORITHM = "HS256"
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/login")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 def get_db():
     db = SessionLocal()
@@ -30,12 +24,8 @@ def get_db():
         yield db
     finally:
         db.close()
-    
-db_dependency = Annotated[Session, Depends(get_db)]
 
-
-
-#skapa användare
+# Create user
 @router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
 async def create_user(
     create_user_request: CreateUserRequest,
@@ -65,23 +55,19 @@ async def create_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal Server Error"
         )
-    
-    
-#login
+
+# Login
 @router.post("/login", response_model=Token)
-async def login(login_data: EmailPasswordRequest, db: Session = Depends(get_db)):
-    email = login_data.email
-    password = login_data.password
-    user = authenticate_user(email, password, db)
+async def login(request_data: EmailPasswordRequest, db: Session = Depends(get_db)):
+    user = authenticate_user(request_data.email, request_data.password, db)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid email or password")
     token = create_access_token(user.email, user.id, timedelta(minutes=20))
     return {"access_token": token, "token_type": "bearer"}
-
       
 
-def authenticate_user(email: str, password: str, db):
+def authenticate_user(email: str, password: str, db: Session):
     user = db.query(Users).filter(Users.email == email).first()
     if not user:
         return False
@@ -95,7 +81,7 @@ def create_access_token(email: str, user_id: int, expires_delta: timedelta):
     encode.update({"exp": expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+async def get_current_user(token: str = Depends(oauth2_bearer)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")

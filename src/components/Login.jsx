@@ -14,8 +14,13 @@ fields.forEach(field => fieldsState[field.id] = '');
 export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
     const handleChange = (e) => {
-        setLoginState({ ...loginState, [e.target.id]: e.target.value })
-    }
+        const { id, value } = e.target;
+        console.log('Input changed:', id, value);
+        setLoginState(prevState => ({
+            ...prevState,
+            [id]: value
+        }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -23,13 +28,13 @@ export default function Login() {
     }
 
     const authenticateUser = () => {
-        const loginUrl = "http://127.0.0.1:8000/auth/login"; // Your login endpoint URL
+        const loginUrl = "http://127.0.0.1:8000/auth/login"; //endpoint URL
     
-        const requestData = {
+        const requestData = { //logindata
             email: loginState.email,
             password: loginState.password
         };
-    
+        
         fetch(loginUrl, {
             method: "POST",
             headers: {
