@@ -70,19 +70,20 @@ async def get():
     return HTMLResponse(html)
 
 
-def get_user_id(client_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == client_id).first()
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user.id
-
-
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def get_user_id(client_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == client_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.id
+
 
 
 

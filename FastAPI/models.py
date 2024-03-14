@@ -7,9 +7,9 @@ from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Tabl
 from database import Base  
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
+from schemas import User
 
-
-class User(Base):
+class Users(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

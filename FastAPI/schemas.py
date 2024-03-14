@@ -1,21 +1,22 @@
 from pydantic import BaseModel, EmailStr, Field
-from datetime import date
-from typing import List
 
-class UserRegister(BaseModel):
-    user_id: int
+class CreateUserRequest(BaseModel):
+    username: str
+    email: EmailStr
+    password: str = Field("Minimum 6 tokens", min_length=6)
+
+class User(BaseModel):
+    id: int
     username: str
     email: EmailStr
 
+    class Config:
+        from_attributes = True
 
-class Group(BaseModel):
-    id: int 
-    name: str
-    users: List[UserRegister]
-
-
-class Stock(BaseModel):
-    stock_id: int
-    name: str
-    value: int
-    date: date
+class EmailPasswordRequest(BaseModel):
+    email: str
+    password: str
+    
+class Token(BaseModel):
+    access_token: str
+    token_type: str

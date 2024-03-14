@@ -1,13 +1,24 @@
-from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel
+from fastapi import FastAPI, status, Depends, HTTPException
+import models
+from database import engine, SessionLocal
 from sqlalchemy.orm import Session
+import auth
+from auth import get_current_user
 from fastapi.middleware.cors import CORSMiddleware
-
-from database import SessionLocal
-from models import User, UserLogin
+import logging
 
 
 app = FastAPI()
+app.include_router(auth.router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+models.Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,24 +35,27 @@ def get_db():
     finally:
         db.close()
 
-@app.post()
-class CreateUser(BaseModel):
-    username: str
-    email: str
-    password: str
 
-@app.post("/signup/")
-def create_user(user: CreateUser, db: Session = Depends(get_db)):
-    db_user = User(username=user.username, email=user.email, password=user.password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+@app.get("/")
+async def root():
+    return {"message": "FastAPI is running"}
 
-@app.post("/login/")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    db = next(get_db()) 
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user is None or db_user.password != user.password:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    return {"message": "Login successful"}
+@app.post("/")
+async def root_post():
+    return {"message": "POST request received at root"}
+
+@app.get("/user", status_code=status.HTTP_200_OK)
+async def user(user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    return {"User": user}
+
+logging.basicConfig(level=logging.INFO)
+try:
+    with engine.connect() as connection:
+        logging.info("Database connection successful")
+except Exception as e:
+    logging.error("Failed to connect to database: %s", e)
+
+logging.getLogger('passlib').setLevel(logging.ERROR)
+#https://github.com/pyca/bcrypt/issues/684

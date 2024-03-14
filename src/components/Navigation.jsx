@@ -1,14 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Navigation = () => {
   return (
     <header>
         <nav>
-            <ul className="flex justify-end space-x-5">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Login</a></li>
-              <li><a href="#">About</a></li>
-            </ul>
+            <Link to="/">Home</Link>
+            <Link to="/about">About</Link> 
+            <Link to="/login">login</Link> 
         </nav>
     </header>
   );
