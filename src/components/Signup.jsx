@@ -1,21 +1,22 @@
 import { useState } from "react";
-import { signupFields } from "../constants/formFields"
+import { signupFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import Input from "./Input";
 
 const fields = signupFields;
 let fieldsState = {};
 
-fields.forEach(field => fieldsState[field.id] = '');
+fields.forEach((field) => (fieldsState[field.id] = ""));
 
 export default function Signup() {
   const [signupState, setSignupState] = useState(fieldsState);
 
-  const handleChange = (e) => setSignupState({ ...signupState, [e.target.id]: e.target.value });
-  
+  const handleChange = (e) =>
+    setSignupState({ ...signupState, [e.target.id]: e.target.value });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(signupState);
+    console.log(signupState); // Check signupState object
     createAccount();
   };
 
@@ -23,54 +24,54 @@ export default function Signup() {
     const signupUrl = "http://127.0.0.1:8000/auth/";
 
     const requestData = {
-        username: signupState.username,
-        email: signupState.email,
-        password: signupState.password
+      username: signupState.username,
+      email: signupState.email,
+      password: signupState.password,
     };
 
+    console.log("Request data:", requestData); // Check requestData object
+
     fetch(signupUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestData)
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
     })
-    .then(response => {
+      .then((response) => {
         if (!response.ok) {
-            throw new Error("Failed to create account");
+          throw new Error("Failed to create account");
         }
         return response.json(); // Parse response JSON
-    })
-    .then(data => {
+      })
+      .then((data) => {
         console.log("Account created successfully:", data);
         // Redirect the user to the login page or perform other actions
         // For example, you can use React Router to navigate to another page
         // history.push('/login');
-    })
-    .catch(error => {
+      })
+      .catch((error) => {
         console.error("Error creating account:", error);
-    });
-};
+      });
+  };
 
   return (
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
       <div className="">
-        {
-          fields.map(field =>
-            <Input
-              key={field.id}
-              handleChange={handleChange}
-              value={signupState[field.id]}
-              labelText={field.labelText}
-              labelFor={field.labelFor}
-              id={field.id}
-              name={field.name}
-              type={field.type}
-              isRequired={field.isRequired}
-              placeholder={field.placeholder}
-            />
-          )
-        }
+        {fields.map((field) => (
+          <Input
+            key={field.id}
+            handleChange={handleChange}
+            value={signupState[field.id]}
+            labelText={field.labelText}
+            labelFor={field.labelFor}
+            id={field.id}
+            name={field.name}
+            type={field.type}
+            isRequired={field.isRequired}
+            placeholder={field.placeholder}
+          />
+        ))}
         <FormAction handleSubmit={handleSubmit} text="Signup" />
       </div>
     </form>
