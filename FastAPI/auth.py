@@ -10,14 +10,15 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from schemas import CreateUserRequest, Token, EmailPasswordRequest, User
 from sqlalchemy.exc import IntegrityError
+import os
 
 router = APIRouter(
     prefix="/auth",
     tags=["/auth"]
 )
 
-SECRET_KEY = "F3xH2sN8JrLp5Rq1e9mV7E8gH4iQ2kT6mX3sY9vB1W7zR5yD2oP1lV9cN3jF6"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/login")

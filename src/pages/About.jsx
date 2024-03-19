@@ -1,23 +1,21 @@
-import Navigation from "../components/Navigation";
-import Footer from "../components/Footer";
+import React from 'react';
 
-export default function About() {
+function AboutPage() {
   return (
-    <>
-      <Navigation />
-      <main className="min-h-screen flex flex-col items-center justify-center">
-        <div>
-          <h1>Aktietävling</h1>
+      <div className="flex-grow flex justify-center">
+          <div className="text-center mt-8">
+            <h1 className="text-4xl font-bold">About</h1>
+            <p className="text-lg mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat, quia!</p>
+            <p className="text-base mt-4">Lorem ipsum dolor sit amet.</p>
+            <p className="text-sm mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            <p className="text-sm mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. At dolorum animi aspernatur.</p>
+            <div className="flex justify-center">
 
-          <p className="text-center mt-10">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            facere quidem rem soluta vel libero ad incidunt dicta, dolore,
-            dolorum, sequi laboriosam officia. Pariatur ut minus alias. Aliquam,
-            aliquid esse!
-          </p>
+            <div className="flex justify-center my-48">
+        <img src="https://www.svgrepo.com/show/526038/money-bag.svg" width="150" height="200"/></div></div>
+          </div>
         </div>
-      </main>
-      <Footer/>
-    </>
   );
 }
+
+export default AboutPage;

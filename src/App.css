@@ -1,3 +1,81 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+
+
+/* background */
+body {
+    background-image: url(https://wallpapers.com/images/featured/new-york-city-5oaa14h4mw6w3o71.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  /* Navbar  */
+  nav {
+    background-color: rgba(0, 0, 0, 0.7); 
+    padding: 20px;
+  }
+  
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    margin-right: 20px;
+  }
+  
+  nav a:hover {
+    text-decoration: underline;
+  }
+  
+  /* footer */
+  footer {
+    background-color: rgba(0, 0, 0, 0.7); 
+    padding: 20px;
+    text-align: center;
+    color: white;
+  }
+  
+  /* container */
+  .container {
+    background-color: rgba(255, 255, 255, 0.8); 
+    padding: 80px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3); 
+    text-align: center;
+  }
+  
+  .page-heading {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #333; 
+  }
+  
+  .form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc; 
+  }
+  
+  .form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .form button:hover {
+    background-color: #0056b3; 
+  }
+  

@@ -1,68 +1,56 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
-import Header from './Header';
-import { redirect } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
 
 
 const fields = loginFields;
-let fieldsState = {};
-fields.forEach(field => fieldsState[field.id] = '');
 
-export default function Login() {
-    const [loginState, setLoginState] = useState(fieldsState);
+const Login = () => {
+    const [loginState, setLoginState] = useState({ email: "", password: "" });
+    const navigate = useNavigate(); 
+
     const handleChange = (e) => {
-        const { id, value } = e.target;
-        console.log('Input changed:', id, value);
+        const { name, value } = e.target;
         setLoginState(prevState => ({
             ...prevState,
-            [id]: value
+            [name]: value
         }));
     };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        authenticateUser();
-        redirect("/login")
-    }
-
-    const authenticateUser = () => {
-        const loginUrl = "http://127.0.0.1:8000/auth/login"; //endpoint URL
     
-        const requestData = { //logindata
-            email: loginState.email,
-            password: loginState.password
-        };
-        
-        fetch(loginUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to login");
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Store the token in localStorage
-                localStorage.setItem('token', data.access_token);
-                
-                // Redirect the user to the dashboard or perform other actions
-                // For example, you can use React Router to navigate to another page
-                // history.push('/dashboard');
-            })
-            .catch(error => {
-                console.error("Error logging in:", error);
-            });
-    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const loginUrl = "http://127.0.0.1:8000/auth/login";
+            const requestData = {
+                email: loginState.email,
+                password: loginState.password
+            };
 
+            const response = await fetch(loginUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to login");
+            }
+
+            const data = await response.json();
+            console.log("Login successful. Token:", data.access_token);
+            localStorage.setItem("token", data.access_token);
+            console.log("Navigating to /afterlogin");
+            navigate("/afterlogin"); // ny sida
+        } catch (error) {
+            console.error("Error logging in:", error);
+        }
+    };
+    
     return (
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -90,19 +78,4 @@ export default function Login() {
     )
 }
 
-
-//icke fungerande input control
-//const handleSubmit = (e) => {
-//    e.preventDefault();
-//    if (!loginState.email || !loginState.password) {
-//        console.error("Email and password are required.");
-//        return;
-//    }
-//    authenticateUser();
-//}
-//
-// Inside authenticateUser function
-//const requestData = {
-//    email: loginState.email.trim(),
-//    password: loginState.password.trim()
-//};
+export default Login;

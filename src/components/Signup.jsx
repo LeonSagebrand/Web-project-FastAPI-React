@@ -1,24 +1,32 @@
 import { useState } from "react";
 import { signupFields } from "../constants/formFields";
+import { useNavigate } from "react-router-dom";
+
 import FormAction from "./FormAction";
 import Input from "./Input";
-import { useNavigate } from "react-router-dom";
 
 const fields = signupFields;
 let fieldsState = {};
 
-fields.forEach((field) => (fieldsState[field.id] = ""));
+fields.forEach((field) => (fieldsState[field.name] = "")); 
 
 export default function Signup() {
   const redirect = useNavigate()
   const [signupState, setSignupState] = useState(fieldsState);
+  const navigate = useNavigate(); // Initialize useNavigate hook here
 
-  const handleChange = (e) =>
-    setSignupState({ ...signupState, [e.target.id]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log('Input changed:', name, value);
+    setSignupState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(signupState); // Check signupState object
+    console.log(signupState);
     createAccount();
     redirect("/")
   };
@@ -32,7 +40,7 @@ export default function Signup() {
       password: signupState.password,
     };
 
-    console.log("Request data:", requestData); // Check requestData object
+    console.log("Request data:", requestData);
 
     fetch(signupUrl, {
       method: "POST",
@@ -45,13 +53,11 @@ export default function Signup() {
         if (!response.ok) {
           throw new Error("Failed to create account");
         }
-        return response.json(); // Parse response JSON
+        return response.json();
       })
       .then((data) => {
         console.log("Account created successfully:", data);
-        // Redirect the user to the login page or perform other actions
-        // For example, you can use React Router to navigate to another page
-        // history.push('/login');
+        navigate("/afterlogin"); // Use navigate here
       })
       .catch((error) => {
         console.error("Error creating account:", error);
@@ -63,13 +69,12 @@ export default function Signup() {
       <div className="">
         {fields.map((field) => (
           <Input
-            key={field.id}
+            key={field.name} 
             handleChange={handleChange}
-            value={signupState[field.id]}
+            value={signupState[field.name]} 
             labelText={field.labelText}
             labelFor={field.labelFor}
-            id={field.id}
-            name={field.name}
+            name={field.name} 
             type={field.type}
             isRequired={field.isRequired}
             placeholder={field.placeholder}
