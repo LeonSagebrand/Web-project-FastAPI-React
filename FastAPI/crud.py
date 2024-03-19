@@ -2,12 +2,14 @@ from datetime import timedelta, datetime
 from fastapi import HTTPException, status, APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Users
+from models import Users, Group
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from schemas import CreateUserRequest, Token, EmailPasswordRequest, User
 from sqlalchemy.exc import IntegrityError
+from typing import List
+from sqlalchemy import select, update, delete, insert
 
 
 router = APIRouter()
@@ -93,3 +95,76 @@ async def get_current_user(token: str = Depends(oauth2_bearer)):
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Could not validate user.")
+    
+
+@router.delete("/users/{user_id}")
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    db.delete(user)
+    db.commit()
+    
+    return {"message": "User deleted successfully"}
+    
+    
+
+# Create Groups
+
+@router.post("/groups", response_model=Group, status_code=status.HTTP_201_CREATED)
+async def create_group(creator_id: int, group_name: str, db: Session = Depends(get_db)):
+    new_group = Group(name = group_name, creator_id = creator_id)
+    db.add(new_group)
+    db.commit()
+    return new_group
+
+
+def join_group(group_id: int, user_id: int, db: Session = Depends(get_db)):
+    group = db.query(Group).filter(Group.id == group_id).first()
+    user = db.query(User).filter(User.id == user_id).first()
+    if not group or not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+    if user in group.members:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User is already a member of the group")
+    
+    group.users.append(user)
+    db.commit()
+    return group
+
+
+@router.get("/groups/{group_id}/users/", response_model=List[User])
+async def get_group_members(group_id: int, db: Session = Depends(get_db)):
+    
+    query = select(Group)
+    users = db.scalars(query).all()
+    return users
+
+
+@router.delete("/groups/{group_id}/users/{user_id}")
+async def delete_user_from_group(group_id: int, user_id: int, db: Session = Depends(get_db)):
+    group = db.query(Group).filter(Group.id == group_id).first()
+    if not group:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    if user not in group.members:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User is not a member of the group")
+    
+    group.members.remove(user)
+    db.commit()
+
+    return {"message": "User removed from the group"}
+
+@router.delete("/groups/{group_id}/")
+def delete_group(group_id: int, db: Session = Depends(get_db)):
+    group = db.query(Group).filter(Group.id == group_id).first()
+    if not group:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+    
+    db.delete(group)
+    db.commit()
+
+    return {"message": "Group deleted"}

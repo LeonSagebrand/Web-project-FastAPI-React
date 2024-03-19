@@ -4,6 +4,7 @@ import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
 import Header from './Header';
+import { redirect } from 'react-router-dom';
 
 
 
@@ -25,6 +26,7 @@ export default function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
         authenticateUser();
+        redirect("/login")
     }
 
     const authenticateUser = () => {
@@ -62,7 +64,7 @@ export default function Login() {
     };
 
     return (
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="-space-y-px">
                 {

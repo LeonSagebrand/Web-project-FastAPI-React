@@ -28,6 +28,7 @@ class Group(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True)
     users: Mapped[List["User"]] = mapped_column(ForeignKey('users.id'), nullable=False) # The users column references the user ids from users table.
+    creator_id: Mapped[int] = mapped_column(Integer)
     # This is Mapped as a list of users for each group. Defined as the user class
 
     # Add other group attributes as needed
@@ -48,7 +49,7 @@ class Transaction(Base):
     category: Mapped[str] = mapped_column(String)
     description: Mapped[str] = Column(String)
     is_income: Mapped[bool] = Column(Boolean)
-    date: Mapped[date] = mapped_column(String)
+    date: Mapped[int] = mapped_column(String)
     
 class Share(Base):
     id = Column(Integer, primary_key=True, index=True)

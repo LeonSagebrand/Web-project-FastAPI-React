@@ -24,33 +24,39 @@ const GroupChat = () => {
     };
 
     return () => {
-      // Clean up WebSocket connection
       ws.close();
     };
   }, []);
 
   const sendMessage = () => {
     if (messageInput.trim() !== '') {
-      const message = { text: messageInput };
-      ws.send(JSON.stringify(message));
-      setMessageInput('');
+    const message = { text: messageInput };
+
+    // Update state with the new message
+    setMessages(prevMessages => [...prevMessages, message]);
+
+    // Send message
+    ws.send(JSON.stringify(message));
+
+    // Default input value
+    setMessageInput('');
     }
   };
 
   return (
     <div>
-      <h1>Chat</h1>
+      <h1 className='text-3xl text-purple-600 font-semibold'>Chat</h1>
       <div>
         {messages.map((message, index) => (
           <div key={index}>{message.text}</div>
         ))}
       </div>
-      <input
+      <input className='border-purple-600 border-2 rounded-lg'
         type="text"
         value={messageInput}
         onChange={(e) => setMessageInput(e.target.value)}
       />
-      <button onClick={sendMessage}>Send</button>
+      <button className='text-purple-600 text-xl font-semibold' onClick={sendMessage}>Send</button>
     </div>
   );
 };
