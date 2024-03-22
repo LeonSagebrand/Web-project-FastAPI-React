@@ -5,6 +5,10 @@ class CreateUserRequest(BaseModel):
     email: EmailStr
     password: str = Field("Minimum 6 tokens", min_length=6)
 
+class CreateGroupRequest(BaseModel):
+    name: str
+    creator_name: str
+
 class User(BaseModel):
     id: int
     username: str
@@ -20,4 +24,10 @@ class EmailPasswordRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class Group(BaseModel):
+    id: int
+    name: str
+    users: str
+    creator_id: int
     

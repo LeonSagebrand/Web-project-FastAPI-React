@@ -1,12 +1,14 @@
 import "./AfterLogin.css";
 import React from 'react';
 import { Link } from "react-router-dom";
+import Dashboard from "../../components/Dashboard";
+import Menu from "../../components/Menu";
 
 
 
 function NavbarAfterLogin({ children }) {
   return (
-    <nav className="flex justify-between items-center bg-gray-800 text-white p-">
+    <nav className="flex justify-between items-center bg-gray-800 text-white">
       <div>
           Home
         
@@ -28,14 +30,14 @@ function Footer() {
 
 const AfterLogin = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-        <NavbarAfterLogin />
-        <div className="flex-grow flex justify-center">
-         
+    <>
+    <div>
+        
         </div>
-        <Footer />
-      
-       </div>
+          <Menu />
+          <Dashboard />
+
+       </>
   );
 };
 

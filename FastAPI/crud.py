@@ -6,7 +6,7 @@ from models import Users, Group
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
-from schemas import CreateUserRequest, Token, EmailPasswordRequest, User
+from schemas import CreateUserRequest, Token, EmailPasswordRequest, User, CreateGroupRequest
 from sqlalchemy.exc import IntegrityError
 from typing import List
 from sqlalchemy import select, update, delete, insert
@@ -113,11 +113,23 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
 # Create Groups
 
 @router.post("/groups", response_model=Group, status_code=status.HTTP_201_CREATED)
-async def create_group(creator_id: int, group_name: str, db: Session = Depends(get_db)):
-    new_group = Group(name = group_name, creator_id = creator_id)
-    db.add(new_group)
-    db.commit()
+async def create_group(create_group_request: CreateGroupRequest, db: Session = Depends(get_db)):
+    try:
+        new_group = Group(**create_group_request.model_dump())
+        db.add(new_group)
+        db.commit()
+    except IntegrityError as e:
+        raise HTTPException(status_code=400, detail="Database error")
     return new_group
+    
+    
+
+# @router.post("/groups", response_model=Group, status_code=status.HTTP_201_CREATED)
+# async def create_group(creator_id: int, group_name: str, db: Session = Depends(get_db)):
+#     new_group = Group(name = group_name, creator_id = creator_id)
+#     db.add(new_group)
+#     db.commit()
+#     return new_group
 
 
 def join_group(group_id: int, user_id: int, db: Session = Depends(get_db)):
@@ -138,7 +150,7 @@ async def get_group_members(group_id: int, db: Session = Depends(get_db)):
     
     query = select(Group)
     users = db.scalars(query).all()
-    return users
+    return Group.users
 
 
 @router.delete("/groups/{group_id}/users/{user_id}")

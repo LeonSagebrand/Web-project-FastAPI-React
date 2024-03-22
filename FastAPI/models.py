@@ -1,16 +1,16 @@
 from database import Base
 from sqlalchemy import Column, Integer, String
 
-# from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey
 # from database import Base
-# from sqlalchemy.orm import relationship, Mapped, mapped_column
-# from typing import List
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from typing import List
 # from datetime import datetime, date
 # from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Table
 # from database import Base  
 # from sqlalchemy.orm import relationship
 # from pydantic import BaseModel
-# from schemas import User
+from schemas import User
 
 
 
@@ -28,13 +28,13 @@ class Users(Base):
 #     password = Column(String)
 #     groups = relationship("Group", secondary="user_group", back_populates="members")
 
-# class Group(Base):
-#     __tablename__ = "groups"
+class Group(Base):
+     __tablename__ = "groups"
 
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-#     name: Mapped[str] = mapped_column(String, unique=True)
-#     users: Mapped[List["User"]] = mapped_column(ForeignKey('users.id'), nullable=False) # The users column references the user ids from users table.
-#     creator_id: Mapped[int] = mapped_column(Integer)
+     id = Column(Integer, primary_key=True)
+     name = Column(String, unique=True)
+     users = Column(ForeignKey('users.id'), nullable=False) # The users column references the user ids from users table.
+     creator_id = Column(Integer)
 #     # This is Mapped as a list of users for each group. Defined as the user class
 
 #     # Add other group attributes as needed
