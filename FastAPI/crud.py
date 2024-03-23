@@ -113,7 +113,7 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
 # Create Groups
 
 @router.post("/groups", response_model=Group, status_code=status.HTTP_201_CREATED)
-async def create_group(create_group_request: CreateGroupRequest, db: Session = Depends(get_db)):
+def create_group(create_group_request: CreateGroupRequest, db: Session = Depends(get_db)):
     try:
         new_group = Group(**create_group_request.model_dump())
         db.add(new_group)
