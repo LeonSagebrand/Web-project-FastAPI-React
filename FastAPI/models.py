@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy import Column, Integer, String
 
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey
-# from database import Base
+from database import Base
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from typing import List
 # from datetime import datetime, date
@@ -29,12 +29,11 @@ class Users(Base):
 #     groups = relationship("Group", secondary="user_group", back_populates="members")
 
 class Group(Base):
-     __tablename__ = "groups"
+    __tablename__ = "groups"
 
-     id = Column(Integer, primary_key=True)
-     name = Column(String, unique=True)
-     users = Column(ForeignKey('users.id'), nullable=False) # The users column references the user ids from users table.
-     creator_id = Column(Integer)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)  # Ensure name is not nullable
+    creator_name = Column(String, nullable=False)  # Store the name of the creator
 #     # This is Mapped as a list of users for each group. Defined as the user class
 
 #     # Add other group attributes as needed

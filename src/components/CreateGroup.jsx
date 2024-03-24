@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const CreateGroup = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ groupName: '', username: '' });
+    const [formData, setFormData] = useState({ groupName: '', creator_name: '' }); 
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -16,14 +16,14 @@ const CreateGroup = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch('http://127.0.0.1:8000/groups', {
+            const response = await fetch('http://127.0.0.1:8000/crud/groups', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     name: formData.groupName,
-                    username: formData.username,
+                    creator_name: formData.creator_name,
                 }),
             });
 
@@ -32,7 +32,7 @@ const CreateGroup = () => {
             }
 
             alert('Group created successfully!');
-            navigate('/groups'); // Navigate to desired route after successful group creation
+            navigate('/groups');
         } catch (error) {
             console.error('Error creating group:', error);
             alert('Failed to create group. Please try again later.');
@@ -54,8 +54,8 @@ const CreateGroup = () => {
                     className='border-blue-500 border-2'
                     type="text"
                     placeholder="Your Username"
-                    name="username"
-                    value={formData.username}
+                    name="creator_name"
+                    value={formData.creator_name} 
                     onChange={handleChange}
                 />
                 <button type="submit">Create Group</button>

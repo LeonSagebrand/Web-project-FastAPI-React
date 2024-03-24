@@ -42,7 +42,7 @@ export const data = {
   datasets: [
     {
       label: 'Dataset 1',
-      data: [10000, 20000, 15000, 12000, 14000, 8000],
+      data: [10000, 20000, 15000, 12000, 14000, 8000], // Just som test data for now. Will try implementing this with the stock values later
       borderColor: 'rgb(255, 99, 132)',
       backgroundColor: 'rgba(255, 99, 132, 0.5)',
     },

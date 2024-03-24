@@ -28,6 +28,5 @@ class Token(BaseModel):
 class Group(BaseModel):
     id: int
     name: str
-    users: str
-    creator_id: int
+    creator_name: str
     

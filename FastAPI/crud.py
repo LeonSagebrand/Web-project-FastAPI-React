@@ -12,7 +12,9 @@ from typing import List
 from sqlalchemy import select, update, delete, insert
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/crud",
+    tags=["/crud"])
 
 SECRET_KEY = "F3xH2sN8JrLp5Rq1e9mV7E8gH4iQ2kT6mX3sY9vB1W7zR5yD2oP1lV9cN3jF6"
 ALGORITHM = "HS256"
@@ -112,9 +114,20 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
 
 # Create Groups
 
-@router.post("/groups", response_model=Group, status_code=status.HTTP_201_CREATED)
+@router.post("/groups", status_code=status.HTTP_201_CREATED)
 def create_group(create_group_request: CreateGroupRequest, db: Session = Depends(get_db)):
     try:
+    #     new_group = Group(
+    #         name=create_group_request.name,
+    #         creator_name = create_group_request.creator_name)
+    #     db.add(new_group)
+    #     db.commit()
+    #     db.refresh(new_group)
+    # except IntegrityError as e:
+    #      raise HTTPException(status_code=400, detail="Database error")
+    # return new_group
+    
+    
         new_group = Group(**create_group_request.model_dump())
         db.add(new_group)
         db.commit()
@@ -143,6 +156,12 @@ def join_group(group_id: int, user_id: int, db: Session = Depends(get_db)):
     group.users.append(user)
     db.commit()
     return group
+
+
+@router.get("/groups")
+def get_groups(db: Session = Depends(get_db)):
+    groups = db.query(Group).all()
+    return groups
 
 
 @router.get("/groups/{group_id}/users/", response_model=List[User])

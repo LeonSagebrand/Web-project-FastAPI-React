@@ -2,7 +2,7 @@ from fastapi import FastAPI, status, Depends, HTTPException
 import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
-import auth
+import auth, crud
 from auth import get_current_user
 from fastapi.middleware.cors import CORSMiddleware
 import logging
@@ -10,6 +10,7 @@ import logging
 
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(crud.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
