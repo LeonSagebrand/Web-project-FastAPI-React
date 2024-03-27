@@ -1,11 +1,15 @@
-import "./App.css";
-import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import "./App.css"; 
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
-import AboutPage from "./pages/About";
-import AfterLogin from "./pages/AfterLogin/AfterLogin";
+import About from "./pages/About";
 import LogOut from "./components/LogOut";
+import PublicNavbar from "./components/PublicNavbar";
+import NavbarAfterLogin from "./components/NavbarAfterLogin";
+import axios from 'axios';
+import AfterLoginPage from "./pages/AfterLogin";
+import AfterLogin from "./pages/AfterLogin/AfterLogin";
 
 function Navbar() {
   return (
@@ -28,6 +32,12 @@ function Navbar() {
   );
 }
 
+
+function Footer() {
+  return <footer>&copy; 2024 Nackademin</footer>;
+}
+
+
 function CenterText() {
   return (
     <div className="text-center mt-8">
@@ -43,15 +53,15 @@ function CenterText() {
         ut aliquip ex ea commodo consequat.
       </p>
       <div className="flex justify-center my-48">
-        <img src="https://cdn-icons-png.freepik.com/512/5655/5655906.png"
-          width="150" height="400"/>
+        <img
+          src="https://cdn-icons-png.freepik.com/512/5655/5655906.png"
+          width="150"
+          height="400"
+          alt="Welcome"
+        />
       </div>
     </div>
   );
-}
-
-function Footer() {
-  return <footer>&copy; 2024 Nackademin</footer>;
 }
 
 function Page({ children }) {
@@ -62,29 +72,64 @@ function Page({ children }) {
   );
 }
 
-
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+
+  const handleLogin = (username) => {
+    setUsername(username);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setUsername("");
+    setIsLoggedIn(false);
+  };
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("token"); //hämta token i storage
+    setIsLoggedIn(!!token); 
+    setIsLoggedIn(!!token);
+
+    if (isLoggedIn && token) {
+      axios.get("http://127.0.0.1:8000/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        setUsername(response.data.username); 
+      })
+      .catch(error => {
+        console.error("Error fetching user information:", error);
+      });
+    }
+  }, [isLoggedIn]); 
+
   return (
+    
     <div className="min-h-screen flex flex-col">
       <BrowserRouter>
-        <Navbar />
-        <div className="flex-grow flex justify-center">
+      {isLoggedIn ? (
+  <NavbarAfterLogin isLoggedIn={isLoggedIn} username={username} onLogout={handleLogout} />
+) : (
+  <PublicNavbar />
+)}         
+        <div className="flex-grow">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Page>
-                  <CenterText />
-                </Page>
-              }
-            />
-            <Route path="/about" element={<Page><AboutPage /></Page>} />
-            <Route path="/login" element={<Page><LoginPage /></Page>} />
+            <Route path="/" element={<Page><CenterText /></Page>} />
+            <Route path="/about" element={<Page><About /></Page>} />
+            <Route path="/login" element={<Page><LoginPage handleLogin={handleLogin} /></Page>} />
             <Route path="/signup" element={<Page><SignupPage /></Page>} />
-            <Route path="/afterlogin/*" element={<AfterLogin />} />
-            <Route path="/logout" element={<Page><LogOut /></Page>} />
 
-            </Routes>
+            <Route path="/afterlogin" element={ <AfterLogin />} />
+
+
+
+            
+            <Route path="/logout" element={<Page><LogOut /></Page>} />
+          </Routes>
         </div>
         <Footer />
       </BrowserRouter>

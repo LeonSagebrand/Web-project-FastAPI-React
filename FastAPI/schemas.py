@@ -38,3 +38,7 @@ class UsernameEmailCheck(BaseModel):
     email: str
     
     
+class UserOut(BaseModel):
+    username: str
+    email: EmailStr
+    

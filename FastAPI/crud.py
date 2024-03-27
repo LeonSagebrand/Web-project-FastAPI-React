@@ -24,6 +24,19 @@ def get_db():
     finally:
         db.close()
 
+from passlib.context import CryptContext
+from jose import jwt, JWTError
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
+from models import Users
+from schemas import Token
+from typing import Annotated
+from fastapi import Depends, status, HTTPException
+from database import get_db
+
+
+
+
 SECRET_KEY = "F3xH2sN8JrLp5Rq1e9mV7E8gH4iQ2kT6mX3sY9vB1W7zR5yD2oP1lV9cN3jF6"
 ALGORITHM = "HS256"
 

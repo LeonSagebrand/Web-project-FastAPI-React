@@ -7,11 +7,12 @@ import { useNavigate } from "react-router-dom";
 
 
 const fields = loginFields;
-let fieldsState = {};
-fields.forEach(field => fieldsState[field.id] = '');
 
-export default function Login() {
-    const [loginState, setLoginState] = useState(fieldsState);
+const Login = () => {
+    const [loginState, setLoginState] = useState({ email: "", password: "" });
+    const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate(); 
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setLoginState(prevState => ({
@@ -22,41 +23,42 @@ export default function Login() {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        authenticateUser();
-    }
+        try {
+            const loginUrl = "http://127.0.0.1:8000/auth/login";
+            const requestData = {
+                email: loginState.email,
+                password: loginState.password
+            };
 
-    const authenticateUser = () => {
-        const loginUrl = "http://127.0.0.1:8000/auth/login"; //endpoint URL
-    
-        const requestData = { //logindata
-            email: loginState.email,
-            password: loginState.password
-        };
-        
-        fetch(loginUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to login");
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Store the token in localStorage
-                localStorage.setItem('token', data.access_token);
-                
-                // Redirect the user to the dashboard or perform other actions
-                // For example, you can use React Router to navigate to another page
-                // history.push('/dashboard');
-            })
-            .catch(error => {
-                console.error("Error logging in:", error);
+            const response = await fetch(loginUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
             });
+
+            if (!response.ok) {
+                throw new Error("Failed to login");
+            }
+
+            const data = await response.json();
+            console.log("Login successful. Token:", data.access_token);
+            localStorage.setItem("token", data.access_token);
+            navigate("/afterlogin"); // ny sida
+
+
+
+
+            
+        } catch (error) {
+            console.error("Error logging in:", error);
+            if (error.message === "Failed to login") {
+                setErrorMessage("User not found. Please check your credentials.");
+            } else {
+                setErrorMessage("An unexpected error occurred. Please try again later.");
+            }
+        }
     };
     
     return (
@@ -91,3 +93,20 @@ export default function Login() {
     )
 }
 
+export default Login;
+
+//icke fungerande input control
+//const handleSubmit = (e) => {
+//    e.preventDefault();
+//    if (!loginState.email || !loginState.password) {
+//        console.error("Email and password are required.");
+//        return;
+//    }
+//    authenticateUser();
+//}
+//
+// Inside authenticateUser function
+//const requestData = {
+//    email: loginState.email.trim(),
+//    password: loginState.password.trim()
+//};
