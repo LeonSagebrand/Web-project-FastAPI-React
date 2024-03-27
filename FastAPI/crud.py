@@ -200,13 +200,15 @@ def delete_group(group_id: int, db: Session = Depends(get_db)):
 #     token_data = verify_token_access(token, credentials_exception)
 #     user = db.scalars(select(User).where(User.id == token_data.sub)).first()
 #     return user
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    token_data = verify_token_access(token, credentials_exception)
-    user = db.scalars(select(User).where(User.id == token_data.sub)).first()
-    return user
+
+
+# def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could not validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     token_data = verify_token_access(token, credentials_exception)
+#     user = db.scalars(select(User).where(User.id == token_data.sub)).first()
+#     return user
 
