@@ -9,33 +9,7 @@ import PublicNavbar from "./components/PublicNavbar";
 import NavbarAfterLogin from "./components/NavbarAfterLogin";
 import axios from 'axios';
 import AfterLoginPage from "./pages/AfterLogin";
-import AfterLogin from "./pages/AfterLogin/AfterLogin";
 
-function Navbar() {
-  return (
-    <nav className="flex justify-between items-center bg-gray-800 text-white p-">
-      <div>
-        <Link to="/" className="text-xl font-bold">
-          Home
-        </Link>
-        <Link to="/about" className="text-xl font-bold">
-          About
-        </Link>
-      </div>
-      <div>
-        <div className="flex items-center">
-          <Link to="/login" className="mr-4">Login</Link>
-          <Link to="/signup">Signup</Link>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-
-function Footer() {
-  return <footer>&copy; 2024 Nackademin</footer>;
-}
 
 
 function CenterText() {
@@ -64,6 +38,10 @@ function CenterText() {
   );
 }
 
+function Footer() {
+  return <footer>&copy; 2024 Nackademin</footer>;
+}
+
 function Page({ children }) {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-12 my-28">
@@ -71,6 +49,15 @@ function Page({ children }) {
     </div>
   );
 }
+
+const NotFound = () => {
+  return (
+    <><div className="text-center mt-8">
+      <h1>404 - Page Not Found</h1>
+      <p>Sorry, the page you are looking for could not be found.</p></div>
+    </>
+  );
+};
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -122,12 +109,8 @@ function App() {
             <Route path="/about" element={<Page><About /></Page>} />
             <Route path="/login" element={<Page><LoginPage handleLogin={handleLogin} /></Page>} />
             <Route path="/signup" element={<Page><SignupPage /></Page>} />
-
-            <Route path="/afterlogin" element={ <AfterLogin />} />
-
-
-
-            
+            <Route path="/afterlogin" element={<Page><AfterLoginPage /></Page>} />
+            <Route path="*" element={<Page><NotFound /></Page>} />
             <Route path="/logout" element={<Page><LogOut /></Page>} />
           </Routes>
         </div>

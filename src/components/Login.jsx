@@ -94,19 +94,3 @@ const Login = () => {
 }
 
 export default Login;
-
-//icke fungerande input control
-//const handleSubmit = (e) => {
-//    e.preventDefault();
-//    if (!loginState.email || !loginState.password) {
-//        console.error("Email and password are required.");
-//        return;
-//    }
-//    authenticateUser();
-//}
-//
-// Inside authenticateUser function
-//const requestData = {
-//    email: loginState.email.trim(),
-//    password: loginState.password.trim()
-//};

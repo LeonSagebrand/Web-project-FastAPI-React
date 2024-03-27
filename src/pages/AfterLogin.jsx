@@ -40,14 +40,12 @@ function AfterLoginPage() {
     //<><NavbarAfterLogin isLoggedIn={true} username={user.username} />
   
     <div className="min-h-screen flex flex-col">
-      <div className="flex-grow flex justify-center">
         <h2 className="font-bold justify-center">Page for logged in</h2>
         <p className="text-sm mt-4">
           Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
           nisi ut aliquip ex ea commodo consequat.
         </p>
       </div>
-    </div>
     //</>
 
   );

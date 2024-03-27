@@ -1,0 +1,81 @@
+/* background */
+body {
+    background-image: url(https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/4YWTZITUPII6VLM3EVHMTGMTXQ.jpg);
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Navbar */
+nav {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+
+
+.afterlogin-container {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+
+
+/* container */
+.container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 80px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    margin: 0 auto;
+    max-width: 1200px; 
+    margin-top: 40px; 
+}
+
+.page-heading {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form button:hover {
+    background-color: #0056b3;
+}

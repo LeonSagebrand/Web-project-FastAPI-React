@@ -11,7 +11,7 @@ function AboutPage() {
             <p className="text-sm mt-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. At dolorum animi aspernatur.</p>
             <div className="flex justify-center">
 
-            <div className="flex justify-center my-48">
+            <div className="flex justify-center my-36">
         <img src="https://www.svgrepo.com/show/148016/finances-stats-bars-graphic-with-up-arrow.svg" width="150" height="200"/></div></div>
           </div>
         </div>

@@ -42,3 +42,7 @@ class UserOut(BaseModel):
     username: str
     email: EmailStr
     
+class UserOut(BaseModel):
+    username: str
+    email: EmailStr
+    

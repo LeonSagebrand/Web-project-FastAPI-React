@@ -12,6 +12,7 @@ from sqlalchemy import select, update, delete, insert
 from auth import get_current_user
 
 
+
 router = APIRouter(
     prefix="/crud",
     tags=["/crud"])
@@ -23,6 +24,19 @@ def get_db():
         yield db
     finally:
         db.close()
+
+from passlib.context import CryptContext
+from jose import jwt, JWTError
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
+from models import Users
+from schemas import Token
+from typing import Annotated
+from fastapi import Depends, status, HTTPException
+from database import get_db
+
+
+
 
 from passlib.context import CryptContext
 from jose import jwt, JWTError
@@ -186,4 +200,13 @@ def delete_group(group_id: int, db: Session = Depends(get_db)):
 #     token_data = verify_token_access(token, credentials_exception)
 #     user = db.scalars(select(User).where(User.id == token_data.sub)).first()
 #     return user
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    token_data = verify_token_access(token, credentials_exception)
+    user = db.scalars(select(User).where(User.id == token_data.sub)).first()
+    return user
 
