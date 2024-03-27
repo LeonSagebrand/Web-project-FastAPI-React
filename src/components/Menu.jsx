@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Group, Activity } from "lucide-react";
+import { LayoutDashboard, Group, Activity, User } from "lucide-react";
 import { motion } from "framer-motion";
 
 const navLinks = [
@@ -14,6 +14,10 @@ const navLinks = [
     {
         name: "Stocks",
         icon: Activity,
+    },
+    {
+        name: "Profile",
+        icon: User,
     }
 ];
 

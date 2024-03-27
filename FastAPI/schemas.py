@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
+from typing import List
 
 class CreateUserRequest(BaseModel):
     username: str
@@ -29,4 +30,11 @@ class Group(BaseModel):
     id: int
     name: str
     creator_name: str
+    # members: List["User"]
+    
+    
+class UsernameEmailCheck(BaseModel):
+    username: str
+    email: str
+    
     

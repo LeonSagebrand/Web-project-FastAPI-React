@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
 import AboutPage from "./pages/About";
-import AfterLogin from "./pages/AfterLogin/AfterLogin";
+import AfterLogin from "./AfterLogin/AfterLogin";
+import PrivateRoute from "./components/PrivateRoute"; 
 import LogOut from "./components/LogOut";
 
 function Navbar() {
@@ -43,7 +44,7 @@ function CenterText() {
         ut aliquip ex ea commodo consequat.
       </p>
       <div className="flex justify-center my-48">
-        <img src="https://cdn-icons-png.freepik.com/512/5655/5655906.png"
+        <img src="https://www.svgrepo.com/show/148016/finances-stats-bars-graphic-with-up-arrow.svg"
           width="150" height="400"/>
       </div>
     </div>

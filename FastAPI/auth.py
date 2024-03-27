@@ -1,15 +1,16 @@
 from datetime import timedelta, datetime
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status, Form
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from starlette import status
 from database import SessionLocal
 from models import Users
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
-from schemas import CreateUserRequest, Token, EmailPasswordRequest, User
+from schemas import CreateUserRequest, Token, EmailPasswordRequest, User, UsernameEmailCheck
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
 import os
 
 router = APIRouter(
@@ -73,6 +74,7 @@ async def create_user(
 async def login(login_data: EmailPasswordRequest, db: Session = Depends(get_db)):
     email = login_data.email
     password = login_data.password
+    
     user = authenticate_user(email, password, db)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -80,7 +82,6 @@ async def login(login_data: EmailPasswordRequest, db: Session = Depends(get_db))
     token = create_access_token(user.email, user.id, timedelta(minutes=20))
     return {"access_token": token, "token_type": "bearer"}
 
-      
 
 def authenticate_user(email: str, password: str, db):
     user = db.query(Users).filter(Users.email == email).first()
@@ -96,15 +97,43 @@ def create_access_token(email: str, user_id: int, expires_delta: timedelta):
     encode.update({"exp": expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+async def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         user_id: int = payload.get("id")
-        if email is None or user_id is None:
+        username: str = fetch_username_from_database(db, email) 
+        if email is None or user_id is None or username is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                 detail="Could not validate user.")
-        return {"email": email, "id": user_id}
+        return {"email": email, "id": user_id, "username": username}
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Could not validate user.")
+        
+def fetch_username_from_database(db: Session, email: str) -> str:
+    user = db.query(Users).filter(Users.email == email).first()
+    if user:
+        return user.username
+    else:
+        return None
+        
+
+#kontrollera befintlig username och email
+@router.post("/check-existing-users")
+async def check_username_email(data: UsernameEmailCheck, db: Session = Depends(get_db)):
+    username = data.username
+    email = data.email
+    
+    user_with_username = db.query(User).filter(User.username == username).first()
+    user_with_email = db.query(User).filter(User.email == email).first()
+    
+    return {
+        "username_exists": bool(user_with_username),
+        "email_exists": bool(user_with_email)
+    }
+    
+@router.get("/me")
+def read_users_me(current_user: Annotated[User, Depends(get_current_user)]) -> UsernameEmailCheck:
+    return current_user
+    

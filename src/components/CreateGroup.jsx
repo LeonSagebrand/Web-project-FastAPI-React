@@ -32,7 +32,6 @@ const CreateGroup = () => {
             }
 
             alert('Group created successfully!');
-            navigate('/groups');
         } catch (error) {
             console.error('Error creating group:', error);
             alert('Failed to create group. Please try again later.');
@@ -40,7 +39,7 @@ const CreateGroup = () => {
     };
 
     return (
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6 ml-10" onSubmit={handleSubmit}>
             <div className="">
                 <input
                     className='border-blue-500 border-2'
@@ -58,7 +57,7 @@ const CreateGroup = () => {
                     value={formData.creator_name} 
                     onChange={handleChange}
                 />
-                <button type="submit">Create Group</button>
+                <button className="border p-2 rounded-lg bg-blue-900 text-white" type="submit">Create Group</button>
             </div>
         </form>
     );

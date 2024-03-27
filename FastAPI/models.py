@@ -1,18 +1,11 @@
+from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy.orm import relationship
 from database import Base
-from sqlalchemy import Column, Integer, String
 
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey
-from database import Base
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from typing import List
-# from datetime import datetime, date
-# from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Table
-# from database import Base  
-# from sqlalchemy.orm import relationship
-# from pydantic import BaseModel
-from schemas import User
-
-
+group_user_association = Table('group_user_association', Base.metadata,
+    Column('group_id', Integer, ForeignKey('groups.id')),
+    Column('user_id', Integer, ForeignKey('users.id'))
+)
 
 class Users(Base):
     __tablename__ = "users"
@@ -21,19 +14,22 @@ class Users(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     hashed_password = Column(String)
-#     password_hash: Mapped[str] = mapped_column(String, nullable=False)
-#     id = Column(Integer, primary_key=True, index=True)
-#     username = Column(String, index=True)
-#     email = Column(String, unique=True, index=True)
-#     password = Column(String)
-#     groups = relationship("Group", secondary="user_group", back_populates="members")
-
+    
+    # Define the many-to-many relationship with Group
+    groups = relationship("Group", secondary=group_user_association, back_populates="members")
+    
+    
 class Group(Base):
     __tablename__ = "groups"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)  # Ensure name is not nullable
-    creator_name = Column(String, nullable=False)  # Store the name of the creator
+    name = Column(String, unique=True, nullable=False) 
+    creator_name = Column(String, nullable=False)  
+    
+    # Define the many-to-many relationship with User
+    members = relationship("Users", secondary=group_user_association, back_populates="groups")
+
+
 #     # This is Mapped as a list of users for each group. Defined as the user class
 
 #     # Add other group attributes as needed

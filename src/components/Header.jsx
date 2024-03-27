@@ -4,7 +4,9 @@ export default function Header({
     heading,
     paragraph,
     linkName,
-    linkUrl="#"
+    linkUrl="#",
+    errorMessage,
+    signupMessage
 }){
     return(
         <div className="mb-10">
@@ -18,6 +20,8 @@ export default function Header({
                 {linkName}
             </Link>
             </p>
+            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+            {signupMessage && <p style={{color: "black"}}>{signupMessage}</p>}
         </div>
     )
 }

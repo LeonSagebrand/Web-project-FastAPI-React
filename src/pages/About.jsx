@@ -12,7 +12,7 @@ function AboutPage() {
             <div className="flex justify-center">
 
             <div className="flex justify-center my-48">
-        <img src="https://www.svgrepo.com/show/526038/money-bag.svg" width="150" height="200"/></div></div>
+        <img src="https://www.svgrepo.com/show/148016/finances-stats-bars-graphic-with-up-arrow.svg" width="150" height="200"/></div></div>
           </div>
         </div>
   );
