@@ -49,14 +49,6 @@ const CreateGroup = () => {
                     value={formData.groupName}
                     onChange={handleChange}
                 />
-                <input
-                    className='border-blue-500 border-2'
-                    type="text"
-                    placeholder="Your Username"
-                    name="creator_name"
-                    value={formData.creator_name} 
-                    onChange={handleChange}
-                />
                 <button className="border p-2 rounded-lg bg-blue-900 text-white" type="submit">Create Group</button>
             </div>
         </form>
