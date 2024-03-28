@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Import axios
 
 export default function ShowGroups() {
     const [groups, setGroups] = useState([]);
@@ -25,49 +26,57 @@ export default function ShowGroups() {
     };
 
     const handleJoinGroup = (groupId) => {
-        // Fetch the current user from the backend
-        fetch('http://127.0.0.1:8000/auth/me', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch current user');
-            }
-            return response.json();
-        })
-        .then(userData => {
-            const userName = userData.username;
-            
-            // Send the POST request to join the group
-            fetch(`http://127.0.0.1:8000/crud/groups`, {
-                method: 'POST',
+        const token = localStorage.getItem("token");
+        if (token) {
+            // Fetch current user
+            fetch('http://127.0.0.1:8000/auth/me', {
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    groupId: groupId,
-                    members: userName
-                })
+                    Authorization: `Bearer ${token}`,
+                }
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to join group');
+                    throw new Error('Failed to fetch current user.');
                 }
+                return response.json();
+            })
+            .then(data => {
+                const userName = data.username;
+    
+                // Send the POST request to join the group
+                fetch('http://127.0.0.1:8000/crud/groups', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        id: groupId,
+                        members: userName
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to join group.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Joined group successfully:', data);
+                    // Handle successful response here
+                })
+                .catch(error => {
+                    console.error('Error joining group:', error);
+                    alert('Failed to join group. Please try again later.');
+                });
             })
             .catch(error => {
-                console.error('Error joining group:', error);
-                alert('Failed to join group. Please try again later.');
+                console.error('Error fetching current user:', error);
+                alert('Failed to fetch current user. Please try again later.');
             });
-        })
-        .catch(error => {
-            console.error('Error fetching current user:', error);
-            alert('Failed to fetch current user. Please try again later.');
-        });
+        }
     };
-    
     
 
     return (
@@ -92,5 +101,3 @@ export default function ShowGroups() {
         </div>
     );
 }
-
-
