@@ -85,9 +85,9 @@ def create_access_token(email: str, user_id: int, expires_delta: timedelta):
 #                             detail="Could not validate user.")
     
 
-@router.delete("/users/delete/{userId}")
-async def delete_user(userId: int, db: Session = Depends(get_db)):
-    user = db.query(Users).filter(Users.id == userId).first()
+@router.delete("/users/delete/{email}")
+async def delete_user(email: str, db: Session = Depends(get_db)):
+    user = db.query(Users).filter(Users.email == email).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(user)
@@ -111,7 +111,7 @@ def create_group(create_group_request: CreateGroupRequest, db: Session = Depends
 
 
 
-@router.post("/groups", status_code=status.HTTP_200_OK)
+@router.post("/groups/join/{group_id}", status_code=status.HTTP_200_OK)
 def join_group(group_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # Fetch the group from the database
     group = db.query(Group).filter(Group.id == group_id).first()

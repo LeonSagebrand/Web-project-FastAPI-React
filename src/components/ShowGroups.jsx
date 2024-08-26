@@ -45,7 +45,7 @@ export default function ShowGroups() {
                 const userName = data.username;
     
                 // Send the POST request to join the group
-                fetch('http://127.0.0.1:8000/crud/groups', {
+                fetch(`http://127.0.0.1:8000/crud/groups/join/${groupId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

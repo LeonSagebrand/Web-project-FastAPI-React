@@ -1,18 +1,18 @@
 import { useState } from "react";
-import Header from "../components/Header";
+import Heading from "../components/Heading";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 
-export default function LoginPage() {
+export default function LoginPage({setLoggedIn}) {
     const [errorMessage, setErrorMessage] = useState("");
     const [signupMessage, setSignupMessage] = useState("");
 
     return (
         <>
-            <Header
+            <Heading
                 heading="Login to your account"
                 paragraph="Don't have an account yet?"
-                linkName="Signup"
+                linkName="Sign up"
                 linkUrl="/signup"
                 errorMessage={errorMessage}
                 signupMessage={signupMessage} 
@@ -20,6 +20,7 @@ export default function LoginPage() {
             <Login 
                 setSignupMessage={setSignupMessage}
                 setErrorMessage={setErrorMessage} 
+                setLoggedIn={setLoggedIn}
             />
         </>
     );

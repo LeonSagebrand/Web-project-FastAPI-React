@@ -5,10 +5,10 @@ import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
 import About from "./pages/About";
 import LogOut from "./components/LogOut";
-import PublicNavbar from "./components/PublicNavbar";
-import NavbarAfterLogin from "./components/NavbarAfterLogin";
+import Header from "./components/Header";
 import axios from 'axios';
 import AfterLoginPage from "./pages/AfterLogin";
+import Stockdash from "./components/Stockdash"
 
 
 
@@ -60,13 +60,39 @@ const NotFound = () => {
 };
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true); // Set initial state to true
+  // const [user, setUser] = useState(null); // Initialize user state
   const [username, setUsername] = useState("");
 
-  const handleLogin = (username) => {
-    setUsername(username);
-    setIsLoggedIn(true);
-  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        axios
+            .get("http://127.0.0.1:8000/auth/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((response) => { 
+                setUsername(response.data.username);
+            })
+            .catch((error) => {
+                console.error("Error fetching user information:", error);
+                setLoggedIn(false);
+            });
+    } else {
+        setLoggedIn(false);
+    }
+}, [loggedIn]);
+
+
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // const handleLogin = (username) => {
+  //   setUsername(username);
+  //   setIsLoggedIn(true);
+  // };
 
   const handleLogout = () => {
     setUsername("");
@@ -74,42 +100,43 @@ function App() {
   };
 
 
-  useEffect(() => {
-    const token = localStorage.getItem("token"); //hämta token i storage
-    setIsLoggedIn(!!token); 
-    setIsLoggedIn(!!token);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token"); //hämta token i storage
+  //   setIsLoggedIn(!!token); 
+  //   setIsLoggedIn(!!token);
 
-    if (isLoggedIn && token) {
-      axios.get("http://127.0.0.1:8000/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then(response => {
-        setUsername(response.data.username); 
-      })
-      .catch(error => {
-        console.error("Error fetching user information:", error);
-      });
-    }
-  }, [isLoggedIn]); 
+  //   if (isLoggedIn && token) {
+  //     axios.get("http://127.0.0.1:8000/auth/me", {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`
+  //       }
+  //     })
+  //     .then(response => {
+  //       setUsername(response.data.username); 
+  //     })
+  //     .catch(error => {
+  //       console.error("Error fetching user information:", error);
+  //     });
+  //   }
+  // }, [isLoggedIn]); 
 
   return (
     
     <div className="min-h-screen flex flex-col">
       <BrowserRouter>
-      {isLoggedIn ? (
+      {/* {isLoggedIn ? (
   <NavbarAfterLogin isLoggedIn={isLoggedIn} username={username} onLogout={handleLogout} />
 ) : (
   <PublicNavbar />
-)}         
+)}          */}
+        <Header setLoggedIn={setLoggedIn} loggedIn={loggedIn} username={username}/>
         <div className="flex-grow">
           <Routes>
             <Route path="/" element={<Page><CenterText /></Page>} />
             <Route path="/about" element={<Page><About /></Page>} />
-            <Route path="/login" element={<Page><LoginPage handleLogin={handleLogin} /></Page>} />
+            <Route path="/login" element={<Page><LoginPage setLoggedIn={setLoggedIn} /></Page>} />
             <Route path="/signup" element={<Page><SignupPage /></Page>} />
-            <Route path="/afterlogin" element={<Page><AfterLoginPage /></Page>} />
+            <Route path="/dashboard" element={<Page><AfterLoginPage /></Page>} />
             <Route path="*" element={<Page><NotFound /></Page>} />
             <Route path="/logout" element={<Page><LogOut /></Page>} />
           </Routes>

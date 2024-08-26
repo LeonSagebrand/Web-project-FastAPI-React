@@ -101,7 +101,7 @@ const handleSubmit = (e) => {
        />
        
         ))}
-        <FormAction handleSubmit={handleSubmit} text="Signup" />
+        <FormAction handleSubmit={handleSubmit} text="Sign up" />
       </div>
     </form>
   );

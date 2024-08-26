@@ -34,11 +34,11 @@ function Profile() {
     const handleDeleteAccount = async () => {
         try {
             const token = localStorage.getItem("token");
-            const userId = userData.id;
+            const email = userData.email;
 
             console.log(userData)
             
-            const response = await fetch(`http://127.0.0.1:8000/crud/users/delete/${userId}`, {
+            const response = await fetch(`http://127.0.0.1:8000/crud/users/delete/${email}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,17 +61,17 @@ function Profile() {
     
 
     return (
-        <div className='mx-10 bg-white'>
+        <div className='mx-10 bg-white space-y-5'>
             <h2 className='text-2xl font-mono'>Your profile</h2>
             {userData && (
-                <div>
+                <div className='text-xl font-semibold'>
                     <p>Username: {userData.username}</p>
                     <p>Email: {userData.email}</p>
                     <p>ID: {userData.id}</p>
                 </div>
             )}
             <div>
-                <button onClick={handleDeleteAccount}>Delete account</button>
+                <button className="p-5 bg-blue-500 rounded-lg" onClick={handleDeleteAccount}>Delete account</button>
             </div>
         </div>
     );

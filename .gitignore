@@ -26,6 +26,12 @@ dist-ssr
 *.sw?
 
 
+FastAPI/Backup/
+
+
+
+
+Backup/
 test.txt
 testL.py
 TestLogin.html

@@ -6,6 +6,7 @@ import Dashboard from "../components/Dashboard";
 import CreateGroup from '../components/CreateGroup';
 import ShowGroups from '../components/ShowGroups'; // Import the new component
 import Profile from '../components/Profile';
+import Stockdash from '../components/Stockdash';
 
 const AfterLoginPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(true); // Set initial state to true
@@ -43,23 +44,26 @@ const AfterLoginPage = () => {
 
     return (
         <>
-            <Menu setActiveIndex={setActiveIndex} />
-            {/* Show the components depending on which navlink is clicked and activeIndex */}
-            {activeIndex === 0 && <Dashboard />}
-            {activeIndex === 1 && (
-                <>
-                    <div>
+            <div className="flex flex-row">
+                <Menu setActiveIndex={setActiveIndex} />
+                {/* Show the components depending on which navlink is clicked and activeIndex */}
+                {activeIndex === 0 && <Dashboard />}
+                {activeIndex === 1 && (
+                    <>
                         <div>
-                            <CreateGroup />
+                            <div>
+                                <CreateGroup />
+                            </div>
+                            <div className='mt-10 ml-10 border bg-white border-blue-700 rounded-lg font-semibold'>
+                                <ShowGroups />
+                            </div>
                         </div>
-                        <div className='mt-10 ml-10 border bg-white border-blue-700 rounded-lg font-semibold'>
-                            <ShowGroups />
-                        </div>
-                    </div>
-                </>
-            )}
-            {activeIndex === 3 && <Profile />}
-            {/* Add other components here */}
+                    </>
+                )}
+                {activeIndex === 2 && <Stockdash />}
+                {activeIndex === 3 && <Profile />}
+                {/* Add other components here */}
+            </div>
         </>
     );
 };

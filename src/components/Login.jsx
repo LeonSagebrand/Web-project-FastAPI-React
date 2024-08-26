@@ -3,12 +3,12 @@ import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const fields = loginFields;
 
-const Login = () => {
+const Login = ({setLoggedIn}) => {
     const [loginState, setLoginState] = useState({ email: "", password: "" });
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate(); 
@@ -45,7 +45,8 @@ const Login = () => {
             const data = await response.json();
             console.log("Login successful. Token:", data.access_token);
             localStorage.setItem("token", data.access_token);
-            navigate("/afterlogin"); // ny sida
+            setLoggedIn(true);
+            navigate("/dashboard"); // ny sida
 
 
 

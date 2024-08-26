@@ -30,13 +30,17 @@ class Group(BaseModel):
     id: int
     name: str
     creator_name: str
-    # members: List["User"]
+    members: List["User"]
     
     
 class UsernameEmailCheck(BaseModel):
     username: str
     email: str
     
+    
+class UserOut(BaseModel):
+    username: str
+    email: EmailStr
     
 class UserOut(BaseModel):
     username: str
